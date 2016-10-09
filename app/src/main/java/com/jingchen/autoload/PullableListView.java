@@ -20,6 +20,8 @@ import android.widget.TextView;
 public class PullableListView extends ListView implements Pullable {
     public static final int INIT = 0;
     public static final int LOADING = 1;
+    public static final int END = 2;
+
     private OnLoadListener mOnLoadListener;
     private ImageView mLoadingView;
     private TextView mStateTextView;
@@ -96,9 +98,14 @@ public class PullableListView extends ListView implements Pullable {
                 break;
 
             case LOADING:
-                mLoadingView.setVisibility(View.VISIBLE);
                 mLoadAnim.start();
+                mLoadingView.setVisibility(View.VISIBLE);
                 mStateTextView.setText(R.string.loading);
+                break;
+            case END:
+                mLoadAnim.stop();
+                mLoadingView.setVisibility(View.INVISIBLE);
+                mStateTextView.setText(R.string.end);
                 break;
         }
     }

@@ -42,7 +42,7 @@ public class MainActivity extends Activity implements OnLoadListener, OnRefreshL
      */
     private void initListView() {
         List<String> items = new ArrayList<String>();
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < 1; i++) {
             items.add("这里是item " + i);
         }
         adapter = new MyAdapter(this, items);
@@ -76,7 +76,7 @@ public class MainActivity extends Activity implements OnLoadListener, OnRefreshL
         new Handler() {
             @Override
             public void handleMessage(Message msg) {
-                for (int i = 0; i < 5; i++)
+                for (int i = 0; i < 2; i++)
                     adapter.addItem("这里是自动加载进来的item");
                 // 千万别忘了告诉控件加载完毕了哦！
                 pullableListView.finishLoading();
