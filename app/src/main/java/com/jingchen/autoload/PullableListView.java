@@ -22,7 +22,6 @@ public class PullableListView extends ListView implements Pullable {
     public static final int LOADING = 1;
     public static final int END = 2;
 
-    private OnLoadListener mOnLoadListener;
     private ImageView mLoadingView;
     private TextView mStateTextView;
     private int state = INIT;
@@ -64,29 +63,12 @@ public class PullableListView extends ListView implements Pullable {
             case MotionEvent.ACTION_UP:
                 // 松开手判断是否自动加载
                 canLoad = true;
-                checkLoad();
                 break;
         }
         return super.onTouchEvent(ev);
     }
 
-    @Override
-    protected void onScrollChanged(int l, int t, int oldl, int oldt) {
-        super.onScrollChanged(l, t, oldl, oldt);
-        // 在滚动中判断是否满足自动加载条件
-        checkLoad();
-    }
 
-    /**
-     * 判断是否满足自动加载条件
-     */
-    private void checkLoad() {
-        if (reachBottom() && mOnLoadListener != null && state != LOADING
-                && canLoad) {
-            mOnLoadListener.onLoad(this);
-            changeState(LOADING);
-        }
-    }
 
     private void changeState(int state) {
         this.state = state;
@@ -130,9 +112,6 @@ public class PullableListView extends ListView implements Pullable {
             return false;
     }
 
-    public void setOnLoadListener(OnLoadListener listener) {
-        this.mOnLoadListener = listener;
-    }
 
     /**
      * @return footerview可见时返回true，否则返回false

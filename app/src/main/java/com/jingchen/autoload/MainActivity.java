@@ -2,8 +2,6 @@ package com.jingchen.autoload;
 
 import android.app.Activity;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
@@ -18,7 +16,7 @@ import java.util.List;
  *
  * @author chenjing
  */
-public class MainActivity extends Activity implements OnLoadListener, OnRefreshListener {
+public class MainActivity extends Activity {
 
     private PullableListView listView;
     private MyAdapter adapter;
@@ -31,10 +29,8 @@ public class MainActivity extends Activity implements OnLoadListener, OnRefreshL
 
         pullToRefreshLayout = ((PullToRefreshLayout) findViewById(R.id.refresh_view));
         listView = (PullableListView) findViewById(R.id.content_view);
-        pullToRefreshLayout.setOnRefreshListener(this);
 
         initListView();
-        listView.setOnLoadListener(this);
     }
 
     /**
@@ -71,27 +67,4 @@ public class MainActivity extends Activity implements OnLoadListener, OnRefreshL
         });
     }
 
-    @Override
-    public void onLoad(final PullableListView pullableListView) {
-        new Handler() {
-            @Override
-            public void handleMessage(Message msg) {
-                for (int i = 0; i < 2; i++)
-                    adapter.addItem("这里是自动加载进来的item");
-                // 千万别忘了告诉控件加载完毕了哦！
-                pullableListView.finishLoading();
-            }
-        }.sendEmptyMessageDelayed(0, 1000);
-    }
-
-    @Override
-    public void onRefresh(final PullToRefreshLayout pullToRefreshLayout) {
-        new Handler() {
-            @Override
-            public void handleMessage(Message msg) {
-                // 千万别忘了告诉控件刷新完毕了哦！
-                pullToRefreshLayout.refreshFinish(PullToRefreshLayout.SUCCEED);
-            }
-        }.sendEmptyMessageDelayed(0, 1000);
-    }
 }

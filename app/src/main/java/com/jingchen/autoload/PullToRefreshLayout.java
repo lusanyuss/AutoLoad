@@ -11,7 +11,6 @@ import android.view.animation.AnimationUtils;
 import android.view.animation.LinearInterpolator;
 import android.view.animation.RotateAnimation;
 import android.widget.RelativeLayout;
-import android.widget.TextView;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -31,8 +30,6 @@ public class PullToRefreshLayout extends RelativeLayout {
     public static final int DONE = 3;
     // 当前状态
     private int state = INIT;
-    // 刷新回调接口
-    private OnRefreshListener mListener;
     // 刷新成功
     public static final int SUCCEED = 0;
     // 刷新失败
@@ -62,18 +59,18 @@ public class PullToRefreshLayout extends RelativeLayout {
     private RotateAnimation refreshingAnimation;
 
     // 下拉头
-    private View refreshView;
+    private View headView;
     // 下拉的箭头
-    private View pullView;
+//    private View pullView;
     // 正在刷新的图标
-    private View refreshingView;
+//    private View refreshingView;
     // 刷新结果图标
-    private View refreshStateImageView;
+//    private View refreshStateImageView;
     // 刷新结果：成功或失败
-    private TextView refreshStateTextView;
+//    private TextView refreshStateTextView;
 
     // 实现了Pullable接口的View
-    private View pullableView;
+    private View listView;
     // 过滤多点触碰
     private int mEvents;
 
@@ -100,7 +97,7 @@ public class PullToRefreshLayout extends RelativeLayout {
             if (pullDownY <= 0) {
                 // 已完成回弹
                 pullDownY = 0;
-                pullView.clearAnimation();
+//                pullView.clearAnimation();
                 // 隐藏下拉头时有可能还在刷新，只有当前状态不是正在刷新时才改变状态
                 if (state != REFRESHING)
                     changeState(INIT);
@@ -112,9 +109,6 @@ public class PullToRefreshLayout extends RelativeLayout {
 
     };
 
-    public void setOnRefreshListener(OnRefreshListener listener) {
-        mListener = listener;
-    }
 
     public PullToRefreshLayout(Context context) {
         super(context);
@@ -154,23 +148,23 @@ public class PullToRefreshLayout extends RelativeLayout {
      * @param refreshResult PullToRefreshLayout.SUCCEED代表成功，PullToRefreshLayout.FAIL代表失败
      */
     public void refreshFinish(int refreshResult) {
-        refreshingView.clearAnimation();
-        refreshingView.setVisibility(View.GONE);
+//        refreshingView.clearAnimation();
+//        refreshingView.setVisibility(View.GONE);
         switch (refreshResult) {
             case SUCCEED:
                 // 刷新成功
-                refreshStateImageView.setVisibility(View.VISIBLE);
-                refreshStateTextView.setText(R.string.refresh_succeed);
-                refreshStateImageView
-                        .setBackgroundResource(R.drawable.refresh_succeed);
+//                refreshStateImageView.setVisibility(View.VISIBLE);
+//                refreshStateTextView.setText(R.string.refresh_succeed);
+//                refreshStateImageView
+//                        .setBackgroundResource(R.drawable.refresh_succeed);
                 break;
             case FAIL:
             default:
                 // 刷新失败
-                refreshStateImageView.setVisibility(View.VISIBLE);
-                refreshStateTextView.setText(R.string.refresh_fail);
-                refreshStateImageView
-                        .setBackgroundResource(R.drawable.refresh_failed);
+//                refreshStateImageView.setVisibility(View.VISIBLE);
+//                refreshStateTextView.setText(R.string.refresh_fail);
+//                refreshStateImageView
+//                        .setBackgroundResource(R.drawable.refresh_failed);
                 break;
         }
         // 刷新结果停留1秒
@@ -188,23 +182,23 @@ public class PullToRefreshLayout extends RelativeLayout {
         switch (state) {
             case INIT:
                 // 下拉布局初始状态
-                refreshStateImageView.setVisibility(View.GONE);
-                refreshStateTextView.setText(R.string.pull_to_refresh);
-                pullView.clearAnimation();
-                pullView.setVisibility(View.VISIBLE);
+//                refreshStateImageView.setVisibility(View.GONE);
+//                refreshStateTextView.setText(R.string.pull_to_refresh);
+//                pullView.clearAnimation();
+//                pullView.setVisibility(View.VISIBLE);
                 break;
             case RELEASE_TO_REFRESH:
                 // 释放刷新状态
-                refreshStateTextView.setText(R.string.release_to_refresh);
-                pullView.startAnimation(rotateAnimation);
+//                refreshStateTextView.setText(R.string.release_to_refresh);
+//                pullView.startAnimation(rotateAnimation);
                 break;
             case REFRESHING:
                 // 正在刷新状态
-                pullView.clearAnimation();
-                refreshingView.setVisibility(View.VISIBLE);
-                pullView.setVisibility(View.INVISIBLE);
-                refreshingView.startAnimation(refreshingAnimation);
-                refreshStateTextView.setText(R.string.refreshing);
+//                pullView.clearAnimation();
+//                refreshingView.setVisibility(View.VISIBLE);
+//                pullView.setVisibility(View.INVISIBLE);
+//                refreshingView.startAnimation(refreshingAnimation);
+//                refreshStateTextView.setText(R.string.refreshing);
                 break;
             case DONE:
                 // 刷新完毕，啥都不做
@@ -233,7 +227,7 @@ public class PullToRefreshLayout extends RelativeLayout {
                 break;
             case MotionEvent.ACTION_MOVE:
                 if (mEvents == 0) {
-                    if (((Pullable) pullableView).canPullDown()) {
+                    if (((Pullable) listView).canPullDown()) {
                         // 可以下拉，正在加载时不能下拉
                         // 对实际滑动距离做缩小，造成用力拉的感觉
                         pullDownY = pullDownY + (ev.getY() - lastY) / radio;
@@ -276,8 +270,6 @@ public class PullToRefreshLayout extends RelativeLayout {
                 if (state == RELEASE_TO_REFRESH) {
                     changeState(REFRESHING);
                     // 刷新操作
-                    if (mListener != null)
-                        mListener.onRefresh(this);
                 }
                 hide();
             default:
@@ -290,31 +282,31 @@ public class PullToRefreshLayout extends RelativeLayout {
 
     private void initView() {
         // 初始化下拉布局
-        pullView = refreshView.findViewById(R.id.pull_icon);
-        refreshStateTextView = (TextView) refreshView
-                .findViewById(R.id.state_tv);
-        refreshingView = refreshView.findViewById(R.id.refreshing_icon);
-        refreshStateImageView = refreshView.findViewById(R.id.state_iv);
+//        pullView = headView.findViewById(R.id.pull_icon);
+//        refreshStateTextView = (TextView) headView
+//                .findViewById(R.id.state_tv);
+//        refreshingView = headView.findViewById(R.id.refreshing_icon);
+//        refreshStateImageView = headView.findViewById(R.id.state_iv);
     }
 
     @Override
     protected void onLayout(boolean changed, int l, int t, int r, int b) {
         if (!isLayout) {
             // 这里是第一次进来的时候做一些初始化
-            refreshView = getChildAt(0);
-            pullableView = getChildAt(1);
+            headView = getChildAt(0);
+            listView = getChildAt(1);
             isLayout = true;
             initView();
-            refreshDist = ((ViewGroup) refreshView).getChildAt(0)
+            refreshDist = ((ViewGroup) headView).getChildAt(0)
                     .getMeasuredHeight();
         }
         // 改变子控件的布局，这里直接用(pullDownY + pullUpY)作为偏移量，这样就可以不对当前状态作区分
-        refreshView.layout(0,
-                (int) (pullDownY) - refreshView.getMeasuredHeight(),
-                refreshView.getMeasuredWidth(), (int) (pullDownY));
-        pullableView.layout(0, (int) (pullDownY),
-                pullableView.getMeasuredWidth(), (int) (pullDownY)
-                        + pullableView.getMeasuredHeight());
+        headView.layout(0,
+                (int) (pullDownY) - headView.getMeasuredHeight(),
+                headView.getMeasuredWidth(), (int) (pullDownY));
+        listView.layout(0, (int) (pullDownY),
+                listView.getMeasuredWidth(), (int) (pullDownY)
+                        + listView.getMeasuredHeight());
     }
 
     class MyTimer {
